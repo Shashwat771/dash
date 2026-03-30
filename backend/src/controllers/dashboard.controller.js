@@ -2,7 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const { execFile } = require('child_process');
 const { parseCSV, parseExcel, parseJSON, analyzeData } = require('../services/parseData');
-const { generateDashboardConfig, generateInsights } = require('../services/gemini');
+const { generateDashboardConfig, generateInsights: generateBasicInsights } = require('../services/gemini');
+const { generateInsightsReport, processNLQuery: processQuery, generateChartFromQuery: generateChart } = require('../services/aiQuery');
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -263,4 +264,71 @@ const calculateMetrics = (req, res) => {
   }
 };
 
-module.exports = { uploadAndGenerateDashboard, regenerateDashboard, calculateMetrics };
+/**
+ * Generate AI-powered insights report with trends and predictions
+ */
+const generateInsights = async (req, res) => {
+  try {
+    const { data, columns, analysis, charts } = req.body;
+    
+    if (!data || !columns || !analysis) {
+      return res.status(400).json({ error: 'Data, columns, and analysis are required' });
+    }
+
+    const insightsReport = await generateInsightsReport(data, columns, analysis, charts || []);
+    
+    res.json({ success: true, insightsReport });
+  } catch (error) {
+    console.error('[Insights] Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+/**
+ * Process natural language query and find matching charts
+ */
+const processNLQuery = async (req, res) => {
+  try {
+    const { query, charts, columns, data } = req.body;
+    
+    if (!query) {
+      return res.status(400).json({ error: 'Query is required' });
+    }
+
+    const queryResult = await processQuery(query, charts || [], columns || [], data || []);
+    
+    res.json({ success: true, queryResult });
+  } catch (error) {
+    console.error('[NL Query] Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+/**
+ * Generate a new chart based on user query
+ */
+const generateChartFromQuery = async (req, res) => {
+  try {
+    const { query, columns, data, analysis } = req.body;
+    
+    if (!query || !columns || !data) {
+      return res.status(400).json({ error: 'Query, columns, and data are required' });
+    }
+
+    const chartConfig = await generateChart(query, columns, data, analysis || {});
+    
+    res.json({ success: true, chartConfig });
+  } catch (error) {
+    console.error('[Chart Generation] Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { 
+  uploadAndGenerateDashboard, 
+  regenerateDashboard, 
+  calculateMetrics,
+  generateInsights,
+  processNLQuery,
+  generateChartFromQuery
+};

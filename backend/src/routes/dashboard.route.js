@@ -5,6 +5,9 @@ const {
   uploadAndGenerateDashboard,
   regenerateDashboard,
   calculateMetrics,
+  generateInsights,
+  processNLQuery,
+  generateChartFromQuery,
 } = require('../controllers/dashboard.controller');
 
 const router = express.Router();
@@ -44,5 +47,10 @@ const upload = multer({
 router.post('/upload', upload.single('file'), uploadAndGenerateDashboard);
 router.post('/regenerate', regenerateDashboard);
 router.post('/calculate-metrics', calculateMetrics);
+
+// AI-powered features
+router.post('/insights', generateInsights);
+router.post('/nl-query', processNLQuery);
+router.post('/chart-from-query', generateChartFromQuery);
 
 module.exports = router;
