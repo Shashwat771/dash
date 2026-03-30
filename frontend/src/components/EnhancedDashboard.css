@@ -637,6 +637,118 @@
   }
 }
 
+/* Ultra-small screens (320px and below) */
+@media (max-width: 320px) {
+  .eda-dashboard {
+    padding: 6px;
+  }
+  
+  .eda-dashboard .dashboard-header {
+    padding: 12px;
+    margin-bottom: 16px;
+    border-radius: var(--radius-md);
+  }
+  
+  .eda-dashboard .dashboard-header h1 {
+    font-size: 1rem;
+    line-height: 1.15;
+  }
+  
+  .eda-dashboard .dashboard-header p {
+    font-size: 0.8rem;
+    margin-top: 6px;
+  }
+  
+  .filters-section {
+    padding: 12px;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  
+  .filter-group select {
+    font-size: 14px;
+    padding: 8px 12px;
+    padding-right: 28px;
+  }
+  
+  .eda-dashboard .kpi-section {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  
+  .eda-dashboard .kpi-card {
+    padding: 14px;
+    border-radius: var(--radius-sm);
+  }
+  
+  .eda-dashboard .kpi-value {
+    font-size: 1.25rem;
+  }
+  
+  .kpi-label {
+    font-size: 0.65rem;
+  }
+  
+  .chart-container {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .chart-container h3 {
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+  }
+  
+  .eda-dashboard .insights-section {
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  
+  .eda-dashboard .insights-section h2 {
+    font-size: 1.1rem;
+  }
+  
+  .insights-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .insight-card {
+    padding: 12px;
+  }
+  
+  .insight-card h4 {
+    font-size: 0.9rem;
+  }
+  
+  .insight-card p {
+    font-size: 0.8rem;
+  }
+  
+  .quality-section {
+    padding: 14px;
+  }
+  
+  .quality-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .quality-item {
+    padding: 10px 12px;
+    font-size: 0.75rem;
+  }
+  
+  .eda-dashboard .table-section {
+    padding: 12px;
+  }
+  
+  .eda-table {
+    font-size: 0.75rem;
+  }
+}
+
 /* Touch device optimizations */
 @media (hover: none) and (pointer: coarse) {
   .eda-dashboard .kpi-card:hover,

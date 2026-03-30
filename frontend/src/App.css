@@ -127,6 +127,33 @@
   .app-brand-text { display: none; }
 }
 
+@media (max-width: 320px) {
+  .app-header-inner {
+    padding: 0 8px;
+    height: 40px;
+    gap: 8px;
+  }
+
+  .app-brand-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .app-brand-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .bc-item {
+    font-size: 0.65rem;
+  }
+
+  .bc-sep {
+    width: 8px;
+    height: 8px;
+  }
+}
+
 /* Safe area notch support */
 @supports (padding-left: env(safe-area-inset-left)) {
   .app-header-inner {

@@ -83,6 +83,18 @@ html {
   }
 }
 
+@media (max-width: 360px) {
+  html {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 320px) {
+  html {
+    font-size: 12px;
+  }
+}
+
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background: var(--bg-dark);
@@ -353,6 +365,53 @@ body.no-scroll {
   overflow: hidden;
   position: fixed;
   width: 100%;
+}
+
+/* Ultra-small screen optimizations (320px and below) */
+@media (max-width: 320px) {
+  ::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+  }
+
+  body {
+    line-height: 1.5;
+  }
+
+  #root {
+    font-size: 12px;
+  }
+
+  /* Tighter responsive container */
+  .responsive-container {
+    padding: var(--space-xs);
+  }
+
+  /* More aggressive grid collapse */
+  .grid-responsive {
+    gap: var(--space-xs);
+  }
+
+  .grid-responsive.cols-2,
+  .grid-responsive.cols-3,
+  .grid-responsive.cols-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Maximum width optimization for ultra-large screens */
+@media (min-width: 2560px) {
+  html {
+    font-size: 18px;
+  }
+
+  body {
+    line-height: 1.7;
+  }
+
+  .responsive-container {
+    max-width: 1800px;
+  }
 }
 
 /* Print styles */

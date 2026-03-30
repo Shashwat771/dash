@@ -471,6 +471,179 @@
   .fu-title { font-size: 1.25rem; }
 }
 
+/* Ultra-small phones (320px and below) */
+@media (max-width: 320px) {
+  .fu-page {
+    padding: 16px 12px;
+    min-height: calc(100vh - 44px);
+  }
+
+  .fu-hero {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    max-width: 100%;
+  }
+
+  .fu-card {
+    padding: 16px 12px;
+    gap: 16px;
+    border-radius: var(--radius-md);
+  }
+
+  .fu-badge {
+    font-size: 0.6rem;
+    padding: 3px 8px;
+  }
+
+  .fu-title {
+    font-size: 1.1rem;
+    line-height: 1.2;
+  }
+
+  .fu-subtitle {
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .fu-drop {
+    padding: 20px 12px;
+    min-height: 120px;
+    gap: 10px;
+  }
+
+  .fu-drop-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .fu-drop-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .fu-drop-primary {
+    font-size: 0.8rem;
+  }
+
+  .fu-drop-or {
+    font-size: 0.7rem;
+  }
+
+  .fu-drop-formats {
+    font-size: 0.6rem;
+    padding: 3px 8px;
+  }
+
+  .fu-file-name {
+    font-size: 0.8rem;
+    word-break: break-word;
+  }
+
+  .fu-file-size {
+    font-size: 0.65rem;
+  }
+
+  .fu-file-change {
+    font-size: 0.65rem;
+  }
+
+  .fu-label {
+    font-size: 0.7rem;
+    gap: 6px;
+  }
+
+  .fu-optional {
+    font-size: 0.55rem;
+    padding: 2px 6px;
+  }
+
+  .fu-textarea {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    min-height: 80px;
+  }
+
+  .fu-error {
+    padding: 8px 10px;
+    font-size: 0.75rem;
+    gap: 6px;
+  }
+
+  .fu-error svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .fu-submit {
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    min-height: 44px;
+    gap: 8px;
+  }
+
+  .fu-submit svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .fu-spinner {
+    width: 16px;
+    height: 16px;
+  }
+
+  .fu-steps {
+    flex-direction: column;
+    padding: 10px 12px;
+    gap: 6px;
+  }
+
+  .fu-step {
+    font-size: 0.65rem;
+    gap: 5px;
+  }
+
+  .fu-step-dot {
+    width: 18px;
+    height: 18px;
+  }
+
+  .fu-features {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: slideUp 0.5s 0.1s ease both;
+    margin-bottom: 20px;
+  }
+
+  .fu-features-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.6px;
+  }
+
+  .fu-feature-card {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .fu-feature-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .fu-feature-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .fu-feature-title {
+    font-size: 0.75rem;
+  }
+
+  .fu-feature-desc {
+    font-size: 0.7rem;
+  }
+}
+
 @media (hover: none) and (pointer: coarse) {
   .fu-submit:hover:not(:disabled) { transform: none; box-shadow: none; }
   .fu-feature-card:hover { border-color: var(--border); background: var(--bg-card); }
