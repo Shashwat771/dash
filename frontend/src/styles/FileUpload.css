@@ -432,6 +432,7 @@
    RESPONSIVE
    ════════════════════════════════════════════════════════ */
 
+/* Tablet: Hide features panel on tablet and smaller */
 @media (max-width: 900px) {
   .fu-hero {
     grid-template-columns: 1fr;
@@ -441,10 +442,12 @@
   .fu-features { display: none; }
 }
 
+/* Mobile: 320px to 600px - Ensure everything fits */
 @media (max-width: 600px) {
   .fu-page {
-    padding: 20px 16px;
+    padding: 16px 12px;
     align-items: flex-start;
+    min-height: auto;
   }
 
   .fu-card {

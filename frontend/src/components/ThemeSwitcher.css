@@ -3,20 +3,33 @@
   z-index: 1000;
 }
 
+/* Mobile-first: Ensure button is always visible */
 .theme-toggle-btn {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
-  padding: 10px 16px;
+  padding: 8px 14px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   color: var(--text-primary);
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
   transition: all var(--transition-normal);
-  min-height: 42px;
+  min-height: 40px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Tablet+: More spacious button */
+@media (min-width: 640px) {
+  .theme-toggle-btn {
+    padding: 10px 16px;
+    font-size: 0.875rem;
+    min-height: 42px;
+  }
 }
 
 .theme-toggle-btn:hover {
@@ -49,11 +62,13 @@
   background: transparent;
 }
 
+/* Desktop: Side dropdown */
 .theme-dropdown {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
   width: 300px;
+  max-width: calc(100vw - 20px);
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -61,6 +76,8 @@
   overflow: hidden;
   z-index: 999;
   animation: dropdownSlideDown 0.2s ease;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 .theme-dropdown-header {
