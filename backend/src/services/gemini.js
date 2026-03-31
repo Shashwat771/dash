@@ -177,13 +177,23 @@ const generateDefaultDashboard = (data, columns, analysis) => {
 };
 
 /**
- * Retry with exponential backoff
+ * Retry with exponential backoff (but skip retries for quota errors)
  */
 const retryWithBackoff = async (fn, maxRetries = 3, delay = 2000) => {
   for (let i = 0; i < maxRetries; i++) {
     try {
       return await fn();
     } catch (error) {
+      // Check if this is a quota/rate limit error
+      const isQuotaError = error.message.includes('quota') || 
+                          error.message.includes('Quota exceeded') ||
+                          error.message.includes('generativelanguage.googleapis.com/generate_content_free_tier');
+      
+      // Quota errors should fail immediately, not retry
+      if (isQuotaError) {
+        throw error;
+      }
+      
       if (i === maxRetries - 1) throw error;
       if (error.status === 503 || error.message.includes('Service Unavailable') || error.message.includes('Too Many Requests') || error.message.includes('429')) {
         const waitTime = delay * Math.pow(2, i);
@@ -287,10 +297,14 @@ IMPORTANT:
       console.log('✅ AI-powered dashboard generated and cached');
       return dashboardConfig;
     } catch (aiError) {
-      if (aiError.message.includes('429') || aiError.message.includes('quota')) {
-        console.log('⚠️  API quota exceeded, using fallback dashboard');
+      if (aiError.message.includes('quota') || aiError.message.includes('Quota exceeded') || aiError.message.includes('free_tier')) {
+        console.log('⚠️  API quota exceeded - Free tier limit reached');
+        console.log('💡 SOLUTION: Upgrade to paid tier at https://ai.google.dev/pricing or wait for quota reset');
+      } else if (aiError.message.includes('429')) {
+        console.log('⚠️  API rate limited (429 Too Many Requests)');
+        console.log('💡 SOLUTION: Using default dashboard instead of AI');
       } else {
-        console.log('⚠️  AI generation failed, using fallback dashboard:', aiError.message);
+        console.log('⚠️  AI generation failed:', aiError.message);
       }
       
       // Fallback: Generate default dashboard without AI
@@ -371,10 +385,13 @@ Provide the insights now:
       console.log('✅ AI insights generated');
       return result.response.text();
     } catch (aiError) {
-      if (aiError.message.includes('429') || aiError.message.includes('quota')) {
-        console.log('⚠️  API quota exceeded, using detailed fallback insights');
+      if (aiError.message.includes('quota') || aiError.message.includes('Quota exceeded') || aiError.message.includes('free_tier')) {
+        console.log('⚠️  Insights: API quota exceeded - Free tier limit reached');
+        console.log('💡 Using default statistics instead of AI insights');
+      } else if (aiError.message.includes('429')) {
+        console.log('⚠️  Insights: API rate limited (429)');
       } else {
-        console.log('⚠️  AI insights failed, using fallback insights:', aiError.message);
+        console.log('⚠️  Insights generation failed:', aiError.message);
       }
 
       // Fallback: Generate detailed insights
@@ -477,6 +494,10 @@ Provide your answer now:
     console.log('✅ Chat response generated');
     return answer;
   } catch (error) {
+    if (error.message.includes('quota') || error.message.includes('Quota exceeded') || error.message.includes('free_tier')) {
+      console.error('💬 Chat: API quota exceeded');
+      throw new Error('Chat service temporarily unavailable - API quota exceeded. Please try again later or upgrade your API plan.');
+    }
     console.error('Chat response error:', error);
     throw new Error(`Failed to generate response: ${error.message}`);
   }

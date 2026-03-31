@@ -3,6 +3,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import FileUpload from './components/FileUpload';
 import Dashboard from './components/Dashboard';
 import ThemeSwitcher from './components/ThemeSwitcher';
+import QuotaErrorBanner from './components/QuotaErrorBanner';
 import './App.css';
 
 function AppContent() {
@@ -10,6 +11,7 @@ function AppContent() {
 
   return (
     <div className="app-root">
+      <QuotaErrorBanner />
       {/* ── Global header ── */}
       <header className="app-header" role="banner">
         <div className="app-header-inner">
