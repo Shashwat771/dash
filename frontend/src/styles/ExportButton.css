@@ -1,0 +1,77 @@
+/* ═══════════════════════════════════════════════════════
+   EXPORT BUTTON  —  PDF Export Controls
+   ═══════════════════════════════════════════════════════ */
+
+.export-button-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.export-btn {
+  position: relative;
+}
+
+.export-btn.exporting {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.export-spinner {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 4px;
+}
+
+.spinner-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.6;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.export-error {
+  position: absolute;
+  bottom: -40px;
+  left: 0;
+  right: 0;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  animation: slideDown 0.2s ease-out;
+  z-index: 10;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-4px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .export-error {
+    white-space: normal;
+    max-width: 200px;
+  }
+}

@@ -14,9 +14,11 @@
     "@emotion/styled": "^11.14.1",
     "@mui/material": "^7.3.9",
     "chart.js": "^4.4.0",
+    "html2pdf.js": "^0.10.1",
     "react": "^19.2.4",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^19.2.4",
+    "react-grid-layout": "^1.4.4",
     "recharts": "^3.8.1"
   },
   "devDependencies": {

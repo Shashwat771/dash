@@ -6,7 +6,14 @@ import {
 } from 'chart.js';
 import { Bar, Line, Pie, Scatter, Doughnut } from 'react-chartjs-2';
 import DataTable from './DataTable';
+import GridDashboard from './GridDashboard';
+import ChatPanel from './ChatPanel';
+import ExportButton from './ExportButton';
+import { useGridLayout } from '../hooks/useGridLayout';
 import '../styles/Dashboard.css';
+import '../styles/GridDashboard.css';
+import '../styles/ChatPanel.css';
+import '../styles/ExportButton.css';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -756,6 +763,9 @@ export default function Dashboard({ dashboardData, onBackClick }) {
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [fullscreenChart, setFullscreenChart] = useState(null);
   const [mobileNav, setMobileNav]             = useState('overview');
+  const [gridLayout, setGridLayout]           = useState([]);
+  const [gridEditMode, setGridEditMode]       = useState(false);
+  const [chatOpen, setChatOpen]               = useState(false);
 
   // ── apply filters + search + sort ─────────────────────────────────────────
   useEffect(() => {
@@ -834,6 +844,56 @@ export default function Dashboard({ dashboardData, onBackClick }) {
 
   useEffect(() => { calcMetrics(filteredData); }, [filteredData, calcMetrics]);
 
+  // ── Initialize grid layout ─────────────────────────────────────────────────
+  useEffect(() => {
+    const charts = dashboardConfig?.charts || [];
+    const saved = localStorage.getItem('dataviz_grid_layout');
+    if (saved && gridLayout.length === 0) {
+      try {
+        setGridLayout(JSON.parse(saved));
+      } catch {
+        const defaultLayout = charts
+          .filter((c) => c.type !== 'table')
+          .map((chart, i) => {
+            const col = (i % 2) * 6;
+            const row = Math.floor(i / 2) * 6;
+            return {
+              i: chart.id,
+              x: col,
+              y: row,
+              w: 6,
+              h: 6,
+              static: false,
+            };
+          });
+        setGridLayout(defaultLayout);
+      }
+    } else if (gridLayout.length === 0) {
+      const defaultLayout = charts
+        .filter((c) => c.type !== 'table')
+        .map((chart, i) => {
+          const col = (i % 2) * 6;
+          const row = Math.floor(i / 2) * 6;
+          return {
+            i: chart.id,
+            x: col,
+            y: row,
+            w: 6,
+            h: 6,
+            static: false,
+          };
+        });
+      setGridLayout(defaultLayout);
+    }
+  }, [dashboardConfig?.charts]);
+
+  // Save grid layout to localStorage when it changes
+  useEffect(() => {
+    if (gridLayout.length > 0) {
+      localStorage.setItem('dataviz_grid_layout', JSON.stringify(gridLayout));
+    }
+  }, [gridLayout]);
+
   // ── sparkline data ─────────────────────────────────────────────────────────
   const getSparkData = (metricId) => {
     const m = (dashboardConfig?.metrics || []).find((x) => x.id === metricId);
@@ -847,6 +907,20 @@ export default function Dashboard({ dashboardData, onBackClick }) {
   const charts     = dashboardConfig?.charts || [];
   const nonTable   = charts.filter((c) => c.type !== 'table');
   const tableChart = charts.find((c) => c.type === 'table');
+
+  // Render individual chart card (used by GridDashboard)
+  const renderChartCard = useCallback((props) => {
+    const { chart, rows, columns: cols, onFullscreen } = props;
+    return (
+      <ChartCard
+        chart={chart}
+        rows={rows}
+        columns={cols}
+        onFullscreen={onFullscreen}
+        loading={false}
+      />
+    );
+  }, []);
 
   const activeFilterCount = Object.keys(filters).filter((k) => k !== '__sort__').length;
   const sortActive        = !!filters.__sort__?.col;
@@ -938,7 +1012,10 @@ export default function Dashboard({ dashboardData, onBackClick }) {
               )}
             </div>
 
-            {/* Download */}
+            {/* Export PDF */}
+            <ExportButton dashboardTitle={dashboardConfig?.dashboardTitle || fileInfo?.name || 'Dashboard'} />
+
+            {/* Download CSV */}
             <button
               className="icon-action-btn"
               onClick={() => downloadCSV(filteredData, columns || [], fileInfo?.name?.replace(/\.[^.]+$/, '') || 'data')}
@@ -950,7 +1027,21 @@ export default function Dashboard({ dashboardData, onBackClick }) {
                 <polyline points="7 10 12 15 17 10" />
                 <line x1="12" y1="15" x2="12" y2="3" />
               </svg>
-              <span className="hide-xs">Export</span>
+              <span className="hide-xs">CSV</span>
+            </button>
+
+            {/* Chat toggle */}
+            <button
+              className={`icon-action-btn ${chatOpen ? 'active-filter-btn' : ''}`}
+              onClick={() => setChatOpen(!chatOpen)}
+              title="Open chat assistant"
+              aria-label="Chat with your data"
+              aria-pressed={chatOpen}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+              <span className="hide-xs">Chat</span>
             </button>
 
             {/* Filter toggle */}
@@ -1069,20 +1160,21 @@ export default function Dashboard({ dashboardData, onBackClick }) {
             )}
 
             {nonTable.length > 0 && (
-              <section id="section-charts" className="db-section">
-                <h2 className="section-heading">Visualisations</h2>
-                <div className="charts-grid">
-                  {nonTable.map((chart) => (
-                    <ChartCard
-                      key={chart.id}
-                      chart={chart}
-                      rows={filteredData}
-                      columns={columns}
-                      onFullscreen={(c, t) => setFullscreenChart({ chart: c, chartType: t })}
-                      loading={false}
-                    />
-                  ))}
+              <section id="section-charts" className="db-section" style={{ padding: 0, display: 'flex', flexDirection: 'column' }}>
+                <div style={{ padding: '20px 20px 0 20px' }}>
+                  <h2 className="section-heading">Visualisations</h2>
                 </div>
+                <GridDashboard
+                  charts={nonTable}
+                  filteredData={filteredData}
+                  columns={columns}
+                  renderChartCard={renderChartCard}
+                  onFullscreen={(c, t) => setFullscreenChart({ chart: c, chartType: t })}
+                  editMode={gridEditMode}
+                  onEditModeChange={setGridEditMode}
+                  layout={gridLayout}
+                  onLayoutChange={setGridLayout}
+                />
               </section>
             )}
 
@@ -1183,6 +1275,13 @@ export default function Dashboard({ dashboardData, onBackClick }) {
           onClose={() => setFullscreenChart(null)}
         />
       )}
+
+      {/* Chat Panel */}
+      <ChatPanel
+        isOpen={chatOpen}
+        onClose={() => setChatOpen(false)}
+        dashboardData={dashboardData}
+      />
     </div>
   );
 }

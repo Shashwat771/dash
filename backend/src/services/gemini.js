@@ -430,7 +430,60 @@ Provide the insights now:
   }
 };
 
+/**
+ * Generate AI-powered response to user questions about their data
+ */
+const generateChatResponse = async (question, dashboardData, dataPreview) => {
+  try {
+    console.log('💬 Processing chat question:', question);
+
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+
+    const prompt = `
+You are a helpful data analyst assistant. Answer the user's question about their dataset based on the information provided.
+
+DASHBOARD CONTEXT:
+- Title: ${dashboardData.title}
+- Columns: ${dashboardData.columns.join(', ')}
+- Total Rows: ${dashboardData.rowCount}
+
+DATA PREVIEW (First 100 rows):
+${dataPreview}
+
+EXISTING INSIGHTS:
+${dashboardData.insights || 'None provided'}
+
+METRICS AVAILABLE:
+${
+  dashboardData.metrics
+    .map((m) => `- ${m.label} (${m.aggregation} of ${m.column})`)
+    .join('\n') || 'None'
+}
+
+USER QUESTION: "${question}"
+
+REQUIREMENTS:
+✓ Answer directly and concisely
+✓ Use specific numbers from the data when possible
+✓ If you cannot answer from the data, explain why
+✓ Keep response to 2-4 sentences
+✓ Be helpful and clear
+
+Provide your answer now:
+`;
+
+    const result = await retryWithBackoff(() => model.generateContent(prompt));
+    const answer = result.response.text();
+    console.log('✅ Chat response generated');
+    return answer;
+  } catch (error) {
+    console.error('Chat response error:', error);
+    throw new Error(`Failed to generate response: ${error.message}`);
+  }
+};
+
 module.exports = {
   generateDashboardConfig,
   generateInsights,
+  generateChatResponse,
 };
